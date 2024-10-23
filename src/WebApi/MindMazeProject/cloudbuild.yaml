@@ -1,0 +1,30 @@
+﻿steps:
+  - name: gcr.io/cloud-builders/docker
+    args:
+      - build
+      - '-t'
+      - >-
+        europe-west3-docker.pkg.dev/keen-virtue-407017/mindmazeartifact/mindmazeprojectwebapi:v1
+      - '-f'
+      - ./src/WebApi/MindMazeProject/Dockerfile
+      - .
+  - name: gcr.io/cloud-builders/docker
+    args:
+      - push
+      - >-
+        europe-west3-docker.pkg.dev/keen-virtue-407017/mindmazeartifact/mindmazeprojectwebapi:v1
+  - name: gcr.io/google.com/cloudsdktool/cloud-sdk
+    args:
+      - run
+      - deploy
+      - mindmazeprojectwebapi
+      - '--image'
+      - >-
+        europe-west3-docker.pkg.dev/keen-virtue-407017/mindmazeartifact/mindmazeprojectwebapi:v1
+      - '--region'
+      - europe-west3
+      - '--platform'
+      - managed
+      - '--set-env-vars'
+      - ASPNETCORE_ENVIRONMENT=Development
+    entrypoint: gcloud
